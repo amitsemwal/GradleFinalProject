@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements FetchJokeTask.Asy
 
     @Override
     public void handleJoke(String joke) {
+        if (joke == null) {
+            joke = getString(R.string.server_down_error);
+        }
         jokeDisplayIntemt.putExtra(JokeActivity.JOKE_KEY, joke);
         startActivity(jokeDisplayIntemt);
     }

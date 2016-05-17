@@ -43,7 +43,8 @@ public class FetchJokeTask extends AsyncTask<Void, Void, String> {
 
 
         try {
-            return myApiService.sendJoke().execute().getData();
+            String joke = myApiService.sendJoke().execute().getData();
+            return joke == null ? "bazinga" : joke;
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -57,6 +58,7 @@ public class FetchJokeTask extends AsyncTask<Void, Void, String> {
 
 
     public interface AsyncResponse {
-        void handleJoke(String output);
+        void
+        handleJoke(String output);
     }
 }
