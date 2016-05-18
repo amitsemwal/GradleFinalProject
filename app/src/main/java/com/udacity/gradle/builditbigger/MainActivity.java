@@ -1,27 +1,18 @@
 package com.udacity.gradle.builditbigger;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-
-import com.example.jokedisplaylibrary.ui.JokeActivity;
-import com.udacity.gradle.builditbigger.network.FetchJokeTask;
 
 
-public class MainActivity extends AppCompatActivity implements FetchJokeTask.AsyncResponse {
-    private FetchJokeTask jokeTask;
-    private Intent jokeDisplayIntemt;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        jokeTask = new FetchJokeTask();
-        jokeTask.setJokeResponce(this);
-        jokeDisplayIntemt = new Intent(this, JokeActivity.class);
+
     }
 
 
@@ -50,17 +41,4 @@ public class MainActivity extends AppCompatActivity implements FetchJokeTask.Asy
 
 
 
-
-    public void launchJokeActivity(View view){
-        jokeTask.execute();
-    }
-
-    @Override
-    public void handleJoke(String joke) {
-        if (joke == null) {
-            joke = getString(R.string.server_down_error);
-        }
-        jokeDisplayIntemt.putExtra(JokeActivity.JOKE_KEY, joke);
-        startActivity(jokeDisplayIntemt);
-    }
 }
