@@ -10,19 +10,23 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.example.jokedisplaylibrary.ui.JokeActivity;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.udacity.gradle.builditbigger.network.FetchJokeTask;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements FetchJokeTask.AsyncResponse{
+public class MainActivityFragment extends Fragment implements FetchJokeTask.AsyncResponse {
     private FetchJokeTask jokeTask;
     private Intent jokeDisplayIntemt;
     private ProgressBar progressBar;
     private Button jokeButton;
+    private InterstitialAd mInterstitialAd;
+    private String mJoke;
 
     public MainActivityFragment() {
     }
@@ -36,14 +40,29 @@ public class MainActivityFragment extends Fragment implements FetchJokeTask.Asyn
         jokeTask = new FetchJokeTask();
         jokeTask.setJokeResponce(this);
         jokeDisplayIntemt = new Intent(getActivity(), JokeActivity.class);
+        mInterstitialAd = new InterstitialAd(getActivity());
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                jokeDisplayIntemt.putExtra(JokeActivity.JOKE_KEY, mJoke);
+                startActivity(jokeDisplayIntemt);
+            }
+        });
+        AdRequest bigAdRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterstitialAd.loadAd(bigAdRequest);
+
+
         jokeButton = (Button) root.findViewById(R.id.tell_joke_button);
-                jokeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        jokeTask.execute();
-                    }
-                });
+        jokeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                jokeTask.execute();
+            }
+        });
 
         AdView mAdView = (AdView) root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -57,18 +76,18 @@ public class MainActivityFragment extends Fragment implements FetchJokeTask.Asyn
     }
 
 
-    public void launchJokeActivity(View view){
-        progressBar.setVisibility(View.VISIBLE);
-        jokeTask.execute();
-    }
-
     @Override
     public void handleJoke(String joke) {
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
         if (joke == null) {
             joke = getString(R.string.server_down_error);
         }
-        jokeDisplayIntemt.putExtra(JokeActivity.JOKE_KEY, joke);
-        startActivity(jokeDisplayIntemt);
+        mJoke = joke;
+        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            jokeDisplayIntemt.putExtra(JokeActivity.JOKE_KEY, joke);
+            startActivity(jokeDisplayIntemt);
+        }
     }
 }

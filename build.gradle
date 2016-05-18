@@ -17,3 +17,18 @@ allprojects {
         jcenter()
     }
 }
+
+// credit : Discussion at Udacity forums
+
+evaluationDependsOn ":app"
+evaluationDependsOn ":cloudJokebackend"
+
+project(":cloudJokebackend") {
+    appengine {
+        daemon true
+    }
+}
+
+task testAppAfterBackendStart(dependsOn: ":cloudJokebackend:appengineRun") {}
+testAppAfterBackendStart.finalizedBy([":app:connectedCheck", ":cloudJokebackend:appengineStop"])
+
