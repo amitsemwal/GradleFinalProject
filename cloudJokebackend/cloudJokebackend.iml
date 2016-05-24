@@ -47,5 +47,6 @@
     <orderEntry type="library" exported="" name="objectify-5.0.3" level="project" />
     <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.28" level="project" />
     <orderEntry type="library" exported="" name="guava-17.0" level="project" />
+    <orderEntry type="library" exported="" name="cloudJokebackend.cloudJokebackend-android-endpoints" level="project" />
   </component>
 </module>
